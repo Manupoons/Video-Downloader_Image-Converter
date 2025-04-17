@@ -1,13 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>YouTube to MP4</title>
+    <meta charset="UTF-8">
+    <title>YouTube to MP4 Downloader</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Download YouTube Video as MP4</h2>
-    <form method="POST">
-        <input type="text" name="url" placeholder="Paste YouTube URL" required>
-        <button type="submit">Download</button>
-    </form>
+    <div class="container">
+        <h1>YouTube to MP4</h1>
+        <p>Paste a YouTube link below to download it as an MP4 video.</p>
+        {% if message %}
+            <div class="alert success">{{ message }}</div>
+        {% endif %}
+        {% if error %}
+            <div class="alert error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <input type="text" name="url" placeholder="Enter YouTube URL..." required>
+            <button type="submit">Download</button>
+        </form>
+    </div>
 </body>
-</html>
+</html> 

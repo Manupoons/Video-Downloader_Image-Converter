@@ -1,26 +1,41 @@
 from flask import Flask, render_template, request
 import yt_dlp
 import os
+import re
+import platform
+from pathlib import Path
 
 app = Flask(__name__)
 
-DOWNLOAD_DIR = './downloads'
+# Determine the appropriate Downloads directory
+if platform.system() == "Windows":
+    DOWNLOAD_DIR = str(Path(os.environ['USERPROFILE']) / "Downloads")
+elif platform.system() == "Darwin":  # macOS
+    DOWNLOAD_DIR = str(Path.home() / "Downloads")
+else:  # Linux and others
+    DOWNLOAD_DIR = str(Path.home() / "Downloads")
+
+# Ensure the download directory exists
+if not os.path.exists(DOWNLOAD_DIR):
+    os.makedirs(DOWNLOAD_DIR)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    message = None
+    error = None
     if request.method == 'POST':
         url = request.form['url']
         if url:
             try:
                 downlaod_video(url)
-                return f"Video downloaded successfully! <a href='/'>Go back</a>"
+                message = "✅ Video downloaded successfully!"
             except Exception as e:
-                return f"An error occurred: {str(e)} <a href='/'>Go back</a>"
-    return render_template('index.html')
+                # Remove ANSI color codes
+                cleaned_error = re.sub(r'\x1b\[[0-9;]*m', '', str(e))
+                error = f"❌ {cleaned_error}"
+    return render_template('index.html', message=message, error=error)
 
 def downlaod_video(url):
-    if not os.path.exists(DOWNLOAD_DIR):
-        os.makedirs(DOWNLOAD_DIR)
     ydl_opts = {
         'format': 'bestvideo[height<=1080]+bestaudio/best',
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
