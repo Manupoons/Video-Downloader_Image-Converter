@@ -42,22 +42,41 @@ def progress():
 
 def progress_hook(d):
     if d['status'] == 'downloading':
-        download_progress['percent'] = d['downloaded_bytes'] / d['total_bytes'] * 100
+        percent = d['downloaded_bytes'] / d['total_bytes'] * 100 if d.get('total_bytes') else 0
+        download_progress['percent'] = percent
+        print(f"Downloading: {percent:.2f}%")
     elif d['status'] == 'finished':
         download_progress['percent'] = 100
+        print("Download finished:", d.get('filename'))
 
 def download_video(url):
     ydl_opts = {
-        'format': 'bestvideo[height<=1080]+bestaudio/best',
+        'format': (
+            # Try AVC (H.264) 1080p first, then fallback to any 1080p + best audio
+            'bestvideo[height<=1080][vcodec^=avc1]+bestaudio/best/'
+            'bestvideo[height<=1080]+bestaudio/best'
+        ),
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
         'merge_output_format': 'mp4',
         'audioquality': 0,
-        'quiet': True,
+        'quiet': False,             # Set to False for visible logs
+        'verbose': True,            # Verbose for format/debug info
         'nocheckcertificate': True,
-        'progress_hooks': [progress_hook],  # Add the hook to track progress
+        'progress_hooks': [progress_hook],
+        'postprocessors': [         # Ensure audio+video get merged
+            {
+                'key': 'FFmpegVideoConvertor',
+                'preferedformat': 'mp4',  # Convert to mp4 if needed
+            }
+        ]
     }
+
+    print(f"🔍 Downloading from: {url}")
+    print(f"📁 Saving to: {DOWNLOAD_DIR}")
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+        info = ydl.extract_info(url, download=True)
+        print(f"✅ Download completed: {info.get('title', 'Unknown Title')}")
 
 if __name__ == '__main__':
     app.run(debug=True)

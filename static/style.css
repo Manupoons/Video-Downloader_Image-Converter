@@ -79,18 +79,115 @@ form button:hover {
 
 #progress-bar-container {
     width: 100%;
-    height: 30px;
-    background-color: #f3f3f3;
-    border-radius: 5px;
+    background-color: #eee;
+    border-radius: 8px;
+    height: 20px;
     margin-top: 20px;
+    overflow: hidden;
     display: none;
 }
+
 #progress-bar {
     height: 100%;
     width: 0%;
     background-color: #4caf50;
-    border-radius: 5px;
-    text-align: center;
-    color: white;
-    line-height: 30px;
+    transition: width 0.4s ease-in-out;
+}
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark) {
+    body.dark {
+        background: #1f2937;
+        color: #f3f4f6;
+    }
+    
+    body.dark .container {
+        background-color: #111827;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    }
+    
+    body.dark h1 {
+        color: #f9fafb;
+    }
+    
+    body.dark p {
+        color: #d1d5db;
+    }
+    
+    body.dark form input[type="text"] {
+        background-color: #1f2937;
+        color: #f3f4f6;
+        border-color: #374151;
+    }
+    
+    body.dark form input[type="text"]:focus {
+        border-color: #3b82f6;
+    }
+    
+    body.dark form button {
+        background-color: #3b82f6;
+    }
+    
+    body.dark form button:hover {
+        background-color: #2563eb;
+    }
+    
+    body.dark .alert.success {
+        background-color: #064e3b;
+        color: #d1fae5;
+        border-color: #10b981;
+    }
+    
+    body.dark .alert.error {
+        background-color: #7f1d1d;
+        color: #fee2e2;
+        border-color: #ef4444;
+    }
+    
+    body.dark #progress-bar-container {
+        background-color: #374151;
+    }
+    
+    /* Optional: style the toggle button */
+    .theme-toggle {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background-color: transparent;
+        border: 2px solid #ccc;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.2s, color 0.2s;
+    }
+    
+    body.dark .theme-toggle {
+        color: #f9fafb;
+        border-color: #555;
+    }
+    
+}
+
+/* RESPONSIVENESS */
+@media (max-width: 500px) {
+    .container {
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        margin: 1rem;
+    }
+
+    form input[type="text"] {
+        font-size: 0.95rem;
+        padding: 0.65rem;
+    }
+
+    form button {
+        padding: 0.65rem 1.2rem;
+        font-size: 0.95rem;
+    }
+
+    #progress-bar-container {
+        height: 16px;
+    }
 }
