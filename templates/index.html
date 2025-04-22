@@ -16,23 +16,21 @@
             <div class="alert error">{{ error }}</div>
         {% endif %}
 
-        <!-- Form to input URL -->
         <form method="POST" id="download-form">
             <input type="text" name="url" placeholder="Enter YouTube URL..." required>
             <button type="submit">Download</button>
         </form>
 
-        <!-- Progress bar container -->
         <div id="progress-bar-container">
             <div id="progress-bar"></div>
         </div>
     </div>
 
     <script>
+        // Progress bar script
         let progressBarContainer = document.getElementById('progress-bar-container');
         let progressBar = document.getElementById('progress-bar');
 
-        // Function to fetch download progress from the server
         function updateProgress() {
             fetch('/progress')
                 .then(response => response.json())
@@ -40,7 +38,6 @@
                     let percent = data.percent || 0;
                     progressBar.style.width = percent + '%';
 
-                    // If download is finished, hide progress bar
                     if (percent >= 100) {
                         setTimeout(() => { 
                             progressBarContainer.style.display = 'none';
@@ -52,17 +49,16 @@
                 });
         }
 
-        // Show the progress bar when form is submitted
         document.getElementById('download-form').onsubmit = function () {
-            progressBarContainer.style.display = 'block';  // Show progress bar
-            setInterval(updateProgress, 500);  // Update progress every 500ms
+            progressBarContainer.style.display = 'block';
+            setInterval(updateProgress, 500);
         };
     </script>
     <script>
+        // Theme toggle script
         const toggleButton = document.getElementById('theme-toggle');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-        // Check stored preference
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
             document.body.classList.add('dark');

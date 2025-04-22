@@ -7,7 +7,6 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-# Global dictionary to track download progress
 download_progress = {'percent': 0}
 
 # Ensure the appropriate Downloads directory exists
@@ -52,21 +51,20 @@ def progress_hook(d):
 def download_video(url):
     ydl_opts = {
         'format': (
-            # Try AVC (H.264) 1080p first, then fallback to any 1080p + best audio
             'bestvideo[height<=1080][vcodec^=avc1]+bestaudio/best/'
             'bestvideo[height<=1080]+bestaudio/best'
         ),
         'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
         'merge_output_format': 'mp4',
         'audioquality': 0,
-        'quiet': False,             # Set to False for visible logs
-        'verbose': True,            # Verbose for format/debug info
+        'quiet': False,             
+        'verbose': True,            
         'nocheckcertificate': True,
         'progress_hooks': [progress_hook],
-        'postprocessors': [         # Ensure audio+video get merged
+        'postprocessors': [         
             {
                 'key': 'FFmpegVideoConvertor',
-                'preferedformat': 'mp4',  # Convert to mp4 if needed
+                'preferedformat': 'mp4',  
             }
         ]
     }
