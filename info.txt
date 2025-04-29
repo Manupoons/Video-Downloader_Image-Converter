@@ -1,0 +1,19 @@
+-- Create an alias --
+
+code ~/.bashrc
+
+alias runvideo="~/Desktop/VideoProject/run.sh"
+
+source ~/.bashrc
+
+getvideo
+
+chmod +x ~/Desktop/VideoProject/run.sh
+
+-- Create an venv --
+
+python -m venv venv
+
+pip intsall -r requirements.txt
+
+source venv/Scripts/activate
