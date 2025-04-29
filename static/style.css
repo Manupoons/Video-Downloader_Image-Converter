@@ -77,6 +77,21 @@ form button:hover {
     border: 1px solid #ef4444;
 }
 
+.nav-button {
+    display: inline-block;
+    padding: 0.6em 1em;
+    margin-top: 1em;
+    background-color: #026d17;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+.nav-button:hover {
+    background-color: #013f0e;
+}
+
 #progress-bar-container {
     width: 100%;
     background-color: #eee;
@@ -94,6 +109,32 @@ form button:hover {
     transition: width 0.4s ease-in-out;
 }
 
+.form-group {
+    margin-bottom: 1.5em;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    color: var(--text-color, #333);
+}
+
+input[type="file"],
+select {
+    padding: 0.6em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: var(--input-bg, #fff);
+    color: var(--text-color, #333);
+}
+
+select:invalid {
+    color: #999;
+}
+
 /* DARK MODE */
 @media (prefers-color-scheme: dark) {
     body.dark {
@@ -106,6 +147,19 @@ form button:hover {
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
     }
     
+    .form-group label {
+        margin-bottom: 0.5em;
+        font-weight: 600;
+        color: var(--text-color, #fff);
+    }
+
+    body.dark input[type="file"],
+    body.dark select {
+        background-color: #1f2937;
+        color: #f3f4f6;
+        border-color: #374151;
+    }
+
     body.dark h1 {
         color: #f9fafb;
     }
@@ -180,11 +234,6 @@ form button:hover {
     form input[type="text"] {
         font-size: 0.95rem;
         padding: 0.65rem;
-    }
-
-    form button {
-        padding: 0.65rem 1.2rem;
-        font-size: 0.95rem;
     }
 
     #progress-bar-container {

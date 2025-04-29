@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Type Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <button id="theme-toggle" class="theme-toggle">🌙 Dark Mode</button>
+        <h1>Image Format Converter</h1>
+
+        {% if message %}
+            <div class="alert success">{{ message }}</div>
+        {% endif %}
+        {% if error %}
+            <div class="alert error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="image">Choose Image(s)</label>
+                <input type="file" name="image" id="image" multiple accept=".jpg,.jpeg,.png,.bmp,.gif,.webp,.arw" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="format">Convert To</label>
+                <select name="format" id="format" required>
+                    <option value="" disabled selected>Select a format</option>
+                    <option value="png">PNG</option>
+                    <option value="jpg">JPG</option>
+                    <option value="jpeg">JPEG</option>
+                    <option value="bmp">BMP</option>
+                    <option value="gif">GIF</option>
+                    <option value="webp">WEBP</option>
+                </select>
+            </div>
+            <button type="submit">Convert</button>
+        </form>
+
+        <div id="progress-bar-container" style="display:none;">
+            <div id="progress-bar"></div>
+        </div>
+
+        <a href="{{ url_for('index') }}" class="nav-button">⬅️ Back to YouTube Downloader</a>
+    </div>
+
+    <script>
+        // Theme toggle script
+        const toggleButton = document.getElementById('theme-toggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.body.classList.add('dark');
+            toggleButton.textContent = '☀️ Light Mode';
+        }
+
+        toggleButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            toggleButton.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    </script>
+</body>
+</html>

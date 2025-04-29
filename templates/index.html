@@ -18,12 +18,13 @@
 
         <form method="POST" id="download-form">
             <input type="text" name="url" placeholder="Enter YouTube URL..." required>
-            <button type="submit">Download</button>
+            <button type="submit" class="nav-button">Download</button>
         </form>
 
         <div id="progress-bar-container">
             <div id="progress-bar"></div>
         </div>
+        <a href="{{ url_for('convert_image') }}" class="nav-button">🔁 Go to Image Converter</a>
     </div>
 
     <script>
