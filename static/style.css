@@ -43,18 +43,35 @@ form input[type="text"]:focus {
     outline: none;
 }
 
-form button {
-    background-color: #2563eb;
+.nav-button {
+    background-color: #026d17;
     color: white;
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 0.5rem;
     font-size: 1rem;
     cursor: pointer;
+    font-weight: bold;
     transition: background-color 0.2s;
 }
 
-form button:hover {
+.nav-button:hover {
+    background-color: #013f0e;
+}
+ 
+.link-button {
+    display: inline-block;
+    padding: 0.6em 1em;
+    margin-top: 1em;
+    background-color: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.link-button:hover {
     background-color: #1e40af;
 }
 
@@ -75,21 +92,6 @@ form button:hover {
     background-color: #fee2e2;
     color: #991b1b;
     border: 1px solid #ef4444;
-}
-
-.nav-button {
-    display: inline-block;
-    padding: 0.6em 1em;
-    margin-top: 1em;
-    background-color: #026d17;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-.nav-button:hover {
-    background-color: #013f0e;
 }
 
 #progress-bar-container {
@@ -121,14 +123,25 @@ form button:hover {
     color: var(--text-color, #333);
 }
 
-input[type="file"],
+.text-style,
+.format-style {
+    color: #333;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-select,
 select {
-    padding: 0.6em;
+    display: inline-block;
+    padding: 0.6em 1.2em;
     border: 1px solid #ccc;
     border-radius: 6px;
+    color: white;
+    cursor: pointer;
     font-size: 1em;
-    background-color: var(--input-bg, #fff);
-    color: var(--text-color, #333);
+    transition: background-color 0.2s ease;
 }
 
 select:invalid {
@@ -150,11 +163,14 @@ select:invalid {
     .form-group label {
         margin-bottom: 0.5em;
         font-weight: 600;
-        color: var(--text-color, #fff);
     }
 
-    body.dark input[type="file"],
-    body.dark select {
+    body.dark .text-style {
+        color: #f3f4f6;
+    }
+
+    body.dark .custom-select,
+    body.dark select{
         background-color: #1f2937;
         color: #f3f4f6;
         border-color: #374151;
@@ -178,12 +194,12 @@ select:invalid {
         border-color: #3b82f6;
     }
     
-    body.dark form button {
-        background-color: #3b82f6;
+    body.dark .nav-button {
+        background-color: #026d17;
     }
     
-    body.dark form button:hover {
-        background-color: #2563eb;
+    body.dark .nav-button:hover {
+        background-color: #013f0e;
     }
     
     body.dark .alert.success {
@@ -220,7 +236,6 @@ select:invalid {
         color: #f9fafb;
         border-color: #555;
     }
-    
 }
 
 /* RESPONSIVENESS */

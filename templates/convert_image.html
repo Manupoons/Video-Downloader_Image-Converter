@@ -19,12 +19,12 @@
 
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="image">Choose Image(s)</label>
-                <input type="file" name="image" id="image" multiple accept=".jpg,.jpeg,.png,.bmp,.gif,.webp,.arw" required>
+                <label for="image" class="text-style, custom-select">Choose Image(s)</label>
+                <input name="image" id="image" type="file" multiple accept=".jpg,.jpeg,.png,.bmp,.gif,.webp,.arw" required>
             </div>
         
             <div class="form-group">
-                <label for="format">Convert To</label>
+                <label for="format" class="text-style">Convert To</label>
                 <select name="format" id="format" required>
                     <option value="" disabled selected>Select a format</option>
                     <option value="png">PNG</option>
@@ -35,14 +35,14 @@
                     <option value="webp">WEBP</option>
                 </select>
             </div>
-            <button type="submit">Convert</button>
+            <button type="submit" class="nav-button">Convert</button>
         </form>
 
         <div id="progress-bar-container" style="display:none;">
             <div id="progress-bar"></div>
         </div>
 
-        <a href="{{ url_for('index') }}" class="nav-button">⬅️ Back to YouTube Downloader</a>
+        <a href="{{ url_for('index') }}" class="link-button">YouTube video Downloader</a>
     </div>
 
     <script>

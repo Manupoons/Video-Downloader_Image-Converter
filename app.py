@@ -34,10 +34,11 @@ def index():
     error = None
     if request.method == 'POST':
         url = request.form['url']
+        format_choice = request.form.get('format', 'mp4')
         if url:
             try:
-                download_video(url)
-                message = "✅ Video downloaded successfully!"
+                download_video(url, format_choice)
+                message = f"✅ {format_choice.upper()} downloaded successfully!"
             except Exception as e:
                 cleaned_error = re.sub(r'\x1b\[[0-9;]*m', '', str(e))
                 error = f"❌ {cleaned_error}"
@@ -98,28 +99,39 @@ def progress_hook(d):
         download_progress['percent'] = 100
         print("Download finished:", d.get('filename'))
 
-def download_video(url):
+def download_video(url, format_choice):
+    output_template = os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s')
     ydl_opts = {
-        'format': (
-            'bestvideo[height<=1080][vcodec^=avc1]+bestaudio/best/'
-            'bestvideo[height<=1080]+bestaudio/best'
-        ),
-        'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
-        'merge_output_format': 'mp4',
-        'audioquality': 0,
-        'quiet': False,             
-        'verbose': True,            
+        'outtmpl': output_template,
+        'quiet': False,
+        'verbose': True,
         'nocheckcertificate': True,
-        'progress_hooks': [progress_hook],
-        'postprocessors': [         
-            {
-                'key': 'FFmpegVideoConvertor',
-                'preferedformat': 'mp4',  
-            }
-        ]
+        'progress_hooks': [progress_hook]
     }
 
-    print(f"🔍 Downloading from: {url}")
+    if format_choice == 'mp3':
+        ydl_opts.update({
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        })
+    else:  # mp4
+        ydl_opts.update({
+            'format': (
+                'bestvideo[height<=1080][vcodec^=avc1]+bestaudio/best/'
+                'bestvideo[height<=1080]+bestaudio/best'
+            ),
+            'merge_output_format': 'mp4',
+            'postprocessors': [{
+                'key': 'FFmpegVideoConvertor',
+                'preferedformat': 'mp4',
+            }],
+        })
+
+    print(f"🔍 Downloading {format_choice.upper()} from: {url}")
     print(f"📁 Saving to: {DOWNLOAD_DIR}")
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:

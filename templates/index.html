@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube to MP4 Downloader</title>
+    <title>YouTube video Downloader</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <button id="theme-toggle" class="theme-toggle">🌙 Dark Mode</button>
-        <h1>YouTube to MP4</h1>
+        <h1>YouTube video Downloader</h1>
         {% if message %}
             <div class="alert success">{{ message }}</div>
         {% endif %}
@@ -18,13 +18,18 @@
 
         <form method="POST" id="download-form">
             <input type="text" name="url" placeholder="Enter YouTube URL..." required>
+            <select name="format" class="format-style" required>
+                <option value="mp4">MP4</option>
+                <option value="mp3">MP3</option>
+            </select>
             <button type="submit" class="nav-button">Download</button>
         </form>
 
         <div id="progress-bar-container">
             <div id="progress-bar"></div>
         </div>
-        <a href="{{ url_for('convert_image') }}" class="nav-button">🔁 Go to Image Converter</a>
+
+        <a href="{{ url_for('convert_image') }}" class="link-button">Image Converter</a>
     </div>
 
     <script>
