@@ -17,3 +17,21 @@ python -m venv venv
 pip intsall -r requirements.txt
 
 source venv/Scripts/activate
+
+-- Compile .exe --
+
+source venv/Scripts/activate
+
+pip freeze > requirements.txt
+
+pyinstaller --noconfirm --onefile \
+--add-data "templates:templates" \
+--add-data "static:static" \
+--add-data "ffmpeg/bin:ffmpeg/bin" \
+--hidden-import flask \
+--hidden-import yt_dlp \
+--hidden-import rawpy \
+--hidden-import imageio \
+--hidden-import PIL.Image \
+app.py
+

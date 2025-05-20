@@ -1,13 +1,24 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import yt_dlp
 import rawpy
 import imageio
 import os
+import sys
+if getattr(sys, 'frozen', False):
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
+ffmpeg_path = os.path.join(base_path, "ffmpeg", "bin")
+os.environ["PATH"] += os.pathsep + ffmpeg_path
 import re
 import platform
 from pathlib import Path
 from werkzeug.utils import secure_filename
 from PIL import Image
+import webbrowser
+import threading
+import tempfile
 
 app = Flask(__name__)
 
@@ -24,8 +35,6 @@ else:  # Linux and others
 if not os.path.exists(DOWNLOAD_DIR):
     os.makedirs(DOWNLOAD_DIR)
 
-IMAGE_UPLOAD_FOLDER = os.path.join(DOWNLOAD_DIR, 'converted_images')
-os.makedirs(IMAGE_UPLOAD_FOLDER, exist_ok=True)
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'arw'}
 
 @app.route('/', methods=['GET', 'POST'])
@@ -46,45 +55,51 @@ def index():
 
 @app.route('/convert-image', methods=['GET', 'POST'])
 def convert_image():
-    messages = []
-    errors = []
     if request.method == 'POST':
         files = request.files.getlist('image')
         target_format = request.form.get('format', '').lower()
 
         if not files or len(files) == 0:
-            errors.append("❌ No files selected.")
-        elif len(files) > 10:
-            errors.append("❌ You can upload up to 10 images at a time.")
-        else:
-            for file in files:
-                if file and allowed_file(file.filename):
-                    try:
-                        filename = secure_filename(file.filename)
-                        input_path = os.path.join(IMAGE_UPLOAD_FOLDER, filename)
-                        file.save(input_path)
+            return render_template('convert_image.html', error="❌ No files selected.")
+        elif len(files) > 1:
+            return render_template('convert_image.html', error="❌ Only one image allowed for download preview.")
 
-                        output_filename = f"{os.path.splitext(filename)[0]}.{target_format}"
-                        output_path = os.path.join(IMAGE_UPLOAD_FOLDER, output_filename)
+        file = files[0]
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            try:
+                with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(filename)[1]) as tmp_in:
+                    file.save(tmp_in.name)
+                    input_path = tmp_in.name
 
-                        file_ext = filename.rsplit('.', 1)[1].lower()
+                output_filename = f"{os.path.splitext(filename)[0]}.{target_format}"
+                with tempfile.NamedTemporaryFile(delete=False, suffix=f".{target_format}") as tmp_out:
+                    output_path = tmp_out.name
 
-                        if file_ext == 'arw':
-                            with rawpy.imread(input_path) as raw:
-                                rgb = raw.postprocess()
-                                imageio.imwrite(output_path, rgb)
-                        else:
-                            with Image.open(input_path) as img:
-                                img = img.convert("RGB")
-                                img.save(output_path, format=target_format.upper())
+                file_ext = filename.rsplit('.', 1)[1].lower()
 
-                        messages.append(f"✅ {filename} → {output_filename}")
-                    except Exception as e:
-                        errors.append(f"❌ Error converting {filename}: {e}")
+                if file_ext == 'arw':
+                    with rawpy.imread(input_path) as raw:
+                        rgb = raw.postprocess()
+                        imageio.imwrite(output_path, rgb)
                 else:
-                    errors.append(f"❌ Invalid file type for {file.filename}")
+                    with Image.open(input_path) as img:
+                        img = img.convert("RGB")
+                        pillow_format = 'JPEG' if target_format == 'jpg' else target_format.upper()
+                        img.save(output_path, format=pillow_format)
 
-    return render_template('convert_image.html', message="<br>".join(messages), error="<br>".join(errors))
+                if os.path.exists(input_path):
+                    os.unlink(input_path)
+
+                return send_file(output_path, as_attachment=True, download_name=output_filename)
+
+            except Exception as e:
+                return render_template('convert_image.html', error=f"❌ Error converting {filename}: {e}")
+
+        else:
+            return render_template('convert_image.html', error=f"❌ Invalid file type for {file.filename}")
+
+    return render_template('convert_image.html')
 
 @app.route('/progress', methods=['GET'])
 def progress():
@@ -141,5 +156,9 @@ def download_video(url, format_choice):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
 
+def open_browser():
+    webbrowser.open_new("http://127.0.0.1:5000")
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    threading.Timer(1.0, open_browser).start()
+    app.run(debug=False, use_reloader=False)
